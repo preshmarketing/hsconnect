@@ -349,7 +349,7 @@ const loadConfig = (
     environmentVariableConfigLoaded = true;
     return;
   } else {
-    logger.debug(`Loaded config from ${DEFAULT_HUBSPOT_CONFIG_YAML_FILE_NAME}`);
+    logger.debug(`Loaded config from ${path}`);
     loadConfigFromFile(path, options);
   }
 };
@@ -373,7 +373,7 @@ const getAndLoadConfigIfNeeded = (options = {}) => {
 };
 
 const getConfigPath = path => {
-  return path || findConfig(getCwd());
+  return path || _configPath || findConfig(getCwd());
 };
 
 const findConfig = directory => {
