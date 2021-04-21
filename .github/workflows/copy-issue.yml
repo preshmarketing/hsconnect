@@ -1,6 +1,6 @@
 on:
   issues:
-    types: [opened]
+    types: [opened, edited, closed]
 jobs:
   copy:
     runs-on: ubuntu-latest

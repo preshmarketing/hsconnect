@@ -1,8 +1,8 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const {
-  enterpriseServer220Admin,
-} = require('@octokit/plugin-enterprise-server');
+
+const { createGithubConnection } = require('./lib/github');
+const { handleCopy, handleUpdate, handleClose } = require('./lib/issue');
 
 async function run() {
   try {
@@ -15,33 +15,26 @@ async function run() {
     });
     const targetRepoBaseUrl = core.getInput('targetRepoBaseUrl');
 
-    let octokit;
+    const octokit = createGithubConnection(
+      targetRepoAuthToken,
+      targetRepoBaseUrl
+    );
 
-    if (targetRepoBaseUrl) {
-      const OctokitEnterprise220 = GitHub.plugin(enterpriseServer220Admin);
-      octokit = new OctokitEnterprise220({
-        auth: targetRepoAuthToken,
-        baseUrl: targetRepoBaseUrl,
-      });
-    } else {
-      octokit = github.getOctokit(targetRepoAuthToken);
+    const action = github.context.payload.action;
+
+    switch (action) {
+      case 'opened':
+        await handleCopy(octokit);
+        break;
+      case 'updated':
+        await handleUpdate(octokit);
+        break;
+      case 'closed':
+        await handleClose(octokit);
+        break;
+      default:
+        core.setFailed('Unsupported issue action type', action);
     }
-
-    // Context from github action
-    const { html_url, title } = github.context.issue;
-
-    //TODO handle updates/deletes?
-    // delete - keep copied issue, but comment "original issue deleted"
-    // update - handle updates to the title only, everything else can be ignored
-
-    const res = await octokit.issues.create({
-      owner: targetRepoOwner,
-      repo: targetRepoName,
-      title,
-      body: html_url,
-    });
-
-    core.setOutput('created', [res.id, res.number].join(':'));
   } catch (error) {
     core.setFailed(error.message);
   }

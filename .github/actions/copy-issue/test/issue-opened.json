@@ -1,0 +1,7 @@
+{
+  "action": "opened",
+  "issue": {
+    "html_url": "https://github.com/",
+    "title": "Example issue title"
+  }
+}

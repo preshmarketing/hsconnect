@@ -3,7 +3,7 @@ author: HubSpot
 description: Copies new issues to a specified repo
 runs:
   using: node12
-  main: index.js
+  main: dist/index.js
 inputs:
   targetRepoOwner:
     description: Owner of the target repo
