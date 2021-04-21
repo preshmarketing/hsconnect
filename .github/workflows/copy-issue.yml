@@ -1,0 +1,14 @@
+on:
+  issues:
+    types: [opened]
+jobs:
+  copy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ./.github/actions/copy-issue
+        with:
+          targetRepoOwner: ${{ secrets.TARGET_REPO_OWNER }}
+          targetRepoName: ${{ secrets.TARGET_REPO_NAME }}
+          targetRepoAuthToken: ${{ secrets.TARGET_REPO_AUTH_TOKEN }}
+          targetRepoBaseUrl: ${{ secrets.TARGET_REPO_BASE_URL }}

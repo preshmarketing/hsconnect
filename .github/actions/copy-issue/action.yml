@@ -1,0 +1,19 @@
+name: GitHub Issue Copy
+author: HubSpot
+description: Copies new issues to a specified repo
+runs:
+  using: node12
+  main: index.js
+inputs:
+  targetRepoOwner:
+    description: Owner of the target repo
+    required: true
+  targetRepoName:
+    description: Name of the target repo
+    required: true
+  targetRepoAuthToken:
+    description: Auth token for target repo (should be stored in secrets)
+    required: true
+  targetRepoBaseUrl:
+    description: Base url (necessary if target repo is an enterprise repo)
+    required: false
