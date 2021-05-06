@@ -20,6 +20,7 @@ const { watch } = require('./lib/watch');
 const { walk } = require('./lib/walk');
 
 module.exports = {
+  logger: require('./logger'),
   ALLOWED_EXTENSIONS,
   DEFAULT_MODE,
   Mode,
