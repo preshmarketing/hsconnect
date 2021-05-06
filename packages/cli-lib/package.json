@@ -7,10 +7,10 @@
     "type": "git",
     "url": "https://github.com/HubSpot/hubspot-cms-tools"
   },
-  "typings": "lib/index.d.ts",
+  "typings": "dist/index.d.ts",
   "exports": {
-    ".": "./lib/index.js",
-    "./*": "./lib/*.js"
+    ".": "./dist/index.js",
+    "./*": "./dist/*.js"
   },
   "files": [
     "lib"
