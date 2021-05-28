@@ -8,6 +8,7 @@ const { logger } = require('@hubspot/cli-lib/logger');
 const { createProject } = require('@hubspot/cli-lib/projects');
 const { createFunction } = require('@hubspot/cli-lib/functions');
 const { GITHUB_RELEASE_TYPES } = require('@hubspot/cli-lib/lib/constants');
+const { commaSeparatedValues } = require('@hubspot/cli-lib/lib/text');
 const { fetchJsonFromRepository } = require('@hubspot/cli-lib/github');
 
 const { setLogLevel, getAccountId } = require('../lib/commonOpts');
@@ -21,7 +22,6 @@ const {
   createApiSamplePrompt,
   overwriteSamplePrompt,
 } = require('../lib/createApiSamplePrompt');
-const { commaSeparatedValues } = require('../lib/text');
 
 const TYPES = {
   function: 'function',
@@ -32,6 +32,7 @@ const TYPES = {
   'react-app': 'react-app',
   'vue-app': 'vue-app',
   'webpack-serverless': 'webpack-serverless',
+  app: 'app',
 };
 
 const ASSET_PATHS = {
@@ -68,10 +69,11 @@ const PROJECT_REPOSITORIES = {
   [TYPES['website-theme']]: 'cms-theme-boilerplate',
   [TYPES['webpack-serverless']]: 'cms-webpack-serverless-boilerplate',
   [TYPES['api-sample']]: 'sample-apps-list',
+  [TYPES['app']]: 'crm-card-weather-app',
 };
 
 const SUPPORTED_ASSET_TYPES = commaSeparatedValues(
-  Object.values(TYPES).filter(type => type !== 'api-sample')
+  Object.values(TYPES).filter(type => !['api-sample', 'app'].includes(type))
 );
 
 const createModule = (moduleDefinition, name, dest) => {
@@ -150,7 +152,7 @@ exports.handler = async options => {
 
   if (assetType === 'global-partial') {
     logger.error(
-      `The asset type ${assetType} has been deprecated. Please choose the "template" asset and select "global partial".`
+      `The CLI command for asset type ${assetType} has been deprecated in an effort to make it easier to know what asset types can be created. Run the "hs create template" command instead. Then when prompted select "global partial".`
     );
     return;
   }
@@ -170,6 +172,7 @@ exports.handler = async options => {
     case TYPES['react-app']:
     case TYPES['vue-app']:
     case TYPES['webpack-serverless']:
+    case TYPES['app']:
       dest = name || assetType;
       break;
     default:
@@ -278,6 +281,7 @@ exports.handler = async options => {
         options
       );
       break;
+    case TYPES['app']:
     case TYPES['react-app']:
     case TYPES['vue-app']:
     case TYPES['webpack-serverless']: {

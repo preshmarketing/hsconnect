@@ -16,9 +16,11 @@ const ALLOWED_EXTENSIONS = new Set([
   'gif',
   'map',
   'svg',
+  'eot',
   'ttf',
   'woff',
   'woff2',
+  'graphql',
 ]);
 const HUBL_EXTENSIONS = new Set(['css', 'html', 'js']);
 const MODULE_EXTENSION = 'module';
@@ -104,7 +106,14 @@ const GITHUB_RELEASE_TYPES = {
   REPOSITORY: 'repository',
 };
 
+const ConfigFlags = {
+  USE_CUSTOM_OBJECT_HUBFILE: 'useCustomObjectHubfile',
+};
+
+const MIN_HTTP_TIMEOUT = 3000;
+
 module.exports = {
+  ConfigFlags,
   Mode,
   ENVIRONMENTS,
   ALLOWED_EXTENSIONS,
@@ -127,4 +136,5 @@ module.exports = {
   FOLDER_DOT_EXTENSIONS,
   POLLING_DELAY,
   GITHUB_RELEASE_TYPES,
+  MIN_HTTP_TIMEOUT,
 };

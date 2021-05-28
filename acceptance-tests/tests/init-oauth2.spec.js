@@ -45,6 +45,8 @@ describe('hs init using oauth2', () => {
             }
           });
 
+          req.end();
+
           return req;
         },
       ]
@@ -75,14 +77,6 @@ describe('hs init using oauth2', () => {
     const portalConfig = yaml.load(readFileSync(CONFIG_FILE_PATH, 'utf8'))
       .portals[0];
     expect(portalConfig.auth.clientSecret).toEqual(config.clientSecret);
-  });
-
-  it('should populate the config file with the correct refreshToken', async () => {
-    const portalConfig = yaml.load(readFileSync(CONFIG_FILE_PATH, 'utf8'))
-      .portals[0];
-    expect(portalConfig.auth.tokenInfo.refreshToken).toEqual(
-      config.refreshToken
-    );
   });
 
   it('should populate the config file with the correct defaultPortal', async () => {

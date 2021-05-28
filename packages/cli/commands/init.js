@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs-extra');
 const {
   getConfigPath,
   createEmptyConfigFile,
@@ -6,7 +7,6 @@ const {
   updateDefaultAccount,
   writeConfig,
   updateAccountConfig,
-  setConfigPath,
 } = require('@hubspot/cli-lib/lib/config');
 const { addConfigOptions } = require('../lib/commonOpts');
 const { handleExit } = require('@hubspot/cli-lib/lib/process');
@@ -22,6 +22,7 @@ const { logger } = require('@hubspot/cli-lib/logger');
 const {
   updateConfigWithPersonalAccessKey,
 } = require('@hubspot/cli-lib/personalAccessKey');
+const { getCwd } = require('@hubspot/cli-lib/path');
 const { trackCommandUsage, trackAuthAction } = require('../lib/usageTracking');
 const { setLogLevel, addTestingOptions } = require('../lib/commonOpts');
 const {
@@ -85,7 +86,7 @@ exports.describe = `initialize ${DEFAULT_HUBSPOT_CONFIG_YAML_FILE_NAME} for a Hu
 
 exports.handler = async options => {
   const { auth: authType = PERSONAL_ACCESS_KEY_AUTH_METHOD.value, c } = options;
-  const configPath = getConfigPath();
+  const configPath = (c && path.join(getCwd(), c)) || getConfigPath();
   setLogLevel(options);
   logDebugInfo(options);
   trackCommandUsage('init', {
@@ -93,7 +94,7 @@ exports.handler = async options => {
   });
   const env = options.qa ? ENVIRONMENTS.QA : ENVIRONMENTS.PROD;
 
-  if ((!c && configPath) || (c && configPath === c)) {
+  if (fs.existsSync(configPath)) {
     logger.error(`The config file '${configPath}' already exists.`);
     logger.info(
       'To update an existing config file, use the "hs auth" command.'
@@ -102,11 +103,7 @@ exports.handler = async options => {
   }
 
   trackAuthAction('init', authType, TRACKING_STATUS.STARTED);
-
-  if (c) {
-    setConfigPath(path.join(process.cwd(), c));
-  }
-  createEmptyConfigFile();
+  createEmptyConfigFile({ path: configPath });
   handleExit(deleteEmptyConfigFile);
 
   try {
@@ -114,7 +111,7 @@ exports.handler = async options => {
     const configPath = getConfigPath();
 
     logger.success(
-      `The config file "${configPath}" was created using your personal access key for account ${name ||
+      `The config file "${configPath}" was created using "${authType}" for account ${name ||
         accountId}.`
     );
 
