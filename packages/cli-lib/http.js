@@ -1,6 +1,4 @@
 const path = require('path');
-const { https } = require('follow-redirects');
-const FormData = require('form-data');
 const request = require('request');
 const requestPN = require('request-promise-native');
 const fs = require('fs-extra');
@@ -105,28 +103,29 @@ const postRequest = async (accountId, options) => {
 };
 
 const postStream = async (accountId, options, filePath) => {
-  const { baseUrl, uri, headers } = await withAuth(accountId, options);
-
-  const form = new FormData();
-  form.append('file', fs.createReadStream(filePath));
-
-  const opts = {
-    method: 'POST',
-    headers: {
-      ...form.getHeaders(),
-      ...headers,
-    },
-  };
-
-  const fullUrl = baseUrl + '/' + uri;
-
+  const requestOptions = await withAuth(accountId, options);
   return new Promise((resolve, reject) => {
-    const req = https.request(fullUrl, opts);
+    console.log(filePath);
+    const stream = fs.createReadStream(filePath);
+    stream.on('drain', () => {
+      console.log('file read stream drain event');
+    });
+
+    const req = request.post({
+      ...requestOptions,
+      formData: {
+        file: stream,
+      },
+      json: false,
+    });
+
     req.on('response', res => {
+      console.log('response received');
       resolve(res);
     });
 
     req.on('socket', s => {
+      console.log('socket', s);
       s.on('drain', () => {
         logger.log('drain event - socket bytes written:', s.bytesWritten);
       });
@@ -135,8 +134,6 @@ const postStream = async (accountId, options, filePath) => {
     req.on('error', error => {
       reject(error);
     });
-
-    form.pipe(req);
   });
 };
 
