@@ -57,6 +57,12 @@ const withPortalId = (portalId, requestOptions) => {
 
 const withAuth = async (accountId, options) => {
   const accountConfig = getAccountConfig(accountId);
+  if (!accountConfig) {
+    logger.error(
+      `No account configuration found for accountId: ${accountId}. Run "hs auth" to add the account configuration.`
+    );
+    process.exit(1);
+  }
   const { env, authType, apiKey } = accountConfig;
   const requestOptions = withPortalId(
     accountId,
