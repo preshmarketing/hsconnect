@@ -536,6 +536,19 @@ en:
             positionals:
               path:
                 describe: "Path to a project folder"
+          dev:
+            describe: "Put the project in local development mode"
+            logs:
+              processExited: "Dev mode successfully exited"
+            options:
+              port:
+                describe: "Local server port"
+            positionals:
+              path:
+                describe: "Path to project"
+            examples:
+              default: "Puts the project in dev mode"
+            success: "Success"
           watch:
             describe: "Watch your local project for changes and automatically upload changed files to a new build in HubSpot"
             examples:
