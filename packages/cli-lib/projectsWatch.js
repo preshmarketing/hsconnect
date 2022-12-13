@@ -58,7 +58,19 @@ const debounceQueueBuild = (accountId, projectName) => {
       await queueBuild(accountId, projectName);
       logger.debug(i18n(`${i18nKey}.debug.buildStarted`, { projectName }));
     } catch (err) {
-      logApiErrorInstance(err, new ApiErrorContext({ accountId, projectName }));
+      if (
+        err.error &&
+        err.error.subCategory === ERROR_TYPES.MISSING_PROJECT_PROVISION
+      ) {
+        logger.log(i18n(`${i18nKey}.logs.watchCancelledFromUi`));
+        process.exit(0);
+      } else {
+        logApiErrorInstance(
+          err,
+          new ApiErrorContext({ accountId, projectName })
+        );
+      }
+
       return;
     }
 
