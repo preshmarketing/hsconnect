@@ -33,11 +33,11 @@ exports.describe = i18n(`${i18nKey}.describe`);
 const localDevConfig = {
   privateApp: {
     baseRoute: 'app',
-    package: './exampleAppLocalDevConfig',
+    package: './localDevPackages/exampleAppLocalDevConfig',
   },
   js: {
     baseRoute: 'js',
-    package: './exampleJSLocalDevConfig', //TODO @hubspot/cms-dev-server
+    package: './localDevPackages/exampleJSLocalDevConfig', //TODO this could be @hubspot/cms-dev-server
   },
 };
 
