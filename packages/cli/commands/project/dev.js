@@ -71,9 +71,10 @@ const passFileChangeToComponentHandlers = filePath => {
     //TODO If we already know that we need to upload, should we still call
     // handle file change for every component?
     if (handlers.handleFileChange) {
-      const uploadRequiredForThisComponent = handlers.handleFileChange(
-        filePath
-      );
+      const {
+        uploadRequired: uploadRequiredForThisComponent,
+      } = handlers.handleFileChange(filePath);
+
       if (!uploadRequired && uploadRequiredForThisComponent) {
         logger.log(`${baseRoute} component is telling us to upload`);
         uploadRequired = true;

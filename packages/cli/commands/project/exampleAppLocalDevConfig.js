@@ -5,7 +5,7 @@ const { logger } = require('@hubspot/cli-lib/logger');
 // want to trigger a project upload
 const handleFileChange = filePath => {
   logger.log(`handling ${filePath} change for app component`);
-  return true;
+  return { uploadRequired: true };
 };
 
 const handleCleanup = () => {
