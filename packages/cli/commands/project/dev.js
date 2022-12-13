@@ -41,10 +41,43 @@ const localDevConfig = {
   },
 };
 
+/*
+ * Brief Overview:
+ * This command is used to coordinate all of the local dev handlers that will be provided by
+ * the teams that own the components. This command itself does not enable local development. This
+ * command simply creates the pattern for how local dev should work in the CLI, and wraps it up
+ * into a single `hs project dev` command. The goal is to allow the teams that own the components
+ * to be in charge of creating the local dev experience for their components (since they are the experts).
+ * The dev projects team will be in charge of ensuring that the local dev experience is unified and
+ * consistent between components, regardless of how many components exist in a project.
+ **/
+
+/*
+ * On INIT:
+ * 1. Initialize component local dev handlers (dynamically import them)
+ * 2. Spin up local dev server, which includes routes for each loaded component handler
+ * 3. Spin up the watch handler to watch for file changes in the project
+ **/
+
+/*
+ * On CHANGE:
+ * 1. Pass the changed file path to each component handler
+ * 2. The handlers can process the change however they want to
+ * 3. Each handler lets us know if it can handle the change without requiring a new build/deploy in HubSpot
+ * 4. If at least one cannot, trigger an upload and deploy, then tear down + re-init everything
+ **/
+
+/*
+ * On EXIT:
+ * 1. Call "handleCleanup" on each component handler to give them time to clean up any temp folders or files
+ * 2. Exit the process (stop the watch and the local dev server)
+ **/
+
 //TODO actually implement something that checks which components a project contains?
 const projectContainsApp = true;
 const projectContainsJSRendering = true;
 
+// Dynamically load component handlers depending on which components exist in the project
 const loadComponentHandlers = () => {
   Object.keys(localDevConfig).forEach(componentType => {
     const localDevConfigForComponent = localDevConfig[componentType];
@@ -63,6 +96,8 @@ const loadComponentHandlers = () => {
   });
 };
 
+// On file change, pass the change to each component handler to see if any of them can
+// handle the change
 const passFileChangeToComponentHandlers = filePath => {
   let uploadRequired = false;
 
